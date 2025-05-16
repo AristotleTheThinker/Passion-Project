@@ -1,1 +1,52 @@
-print("Hello World")
+from gettext import install
+import numpy as np
+import torch
+
+input_layer_size = 784 #input of a 28x28 grid
+
+layer2_size = 128 #second layer has 128 neurons, can change
+
+layer3_size = 128
+
+output_layer_size = 36 #outputs a number or character
+
+input_neurons = []
+
+layer2_neurons = []
+
+layer1to2connections = []
+
+class neuron:
+    def __init__(self, val):
+        self.val = val
+
+    def set_val(self, new_val):
+        self.val = new_val
+
+class connection: #connection has a weight, bias, and is connected to 2 neurons
+    def __init__(self, weight, bias, neuron_in, neuron_out):
+        self.weight = weight
+        self.bias = bias
+        self.neuron_in = neuron_in
+        self.neuron_out = neuron_out
+
+    def set_weight(self, new_weight):
+        self.weight = new_weight
+
+    def set_bias(self, new_bias):
+        self.bias = new_bias
+
+for i in range(input_layer_size):
+    instance = neuron(0)
+    input_neurons.append(instance)
+
+for i in range(layer2_size):
+    instance = neuron(0)
+    layer2_neurons.append(instance)
+
+for neuron_in in input_neurons:
+    for neuron_out in layer2_neurons:
+        instance = connection(np.random.uniform(-0.01, 0.01), 0, neuron_in, neuron_out)
+        layer1to2connections.append(instance)
+
+
