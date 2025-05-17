@@ -74,4 +74,10 @@ for neuron_in in layer3_neurons:
         instance = connection(np.random.uniform(-0.01, 0.01), np.random.uniform(-0.01, 0.01), neuron_in, neuron_out)
         layer3to_output_connections.append(instance)
 
+neurons = [input_neurons, layer2_neurons, layer3_neurons, output_layer_neurons]
 
+connections = [layer1to2connections, layer2to3connections, layer3to_output_connections]
+
+for layer in neurons:
+    for neuron in layer:
+        print(neuron.val)
