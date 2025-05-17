@@ -118,10 +118,14 @@ class Neural_network:
         for i in range(len(image)):
             for j in range(len(image[i])):
                 self.input_neurons[28*i+j].set_val(self.input_sigmoid(image[i][j]))
+        
+        self.target_arr = [0] * 36
+        self.target_arr[label_num - 1] = 1
 
-        for i in range(36):
-            self.target_arr.append(0)
-        self.target_arr[label_num-1] = 1
+    def reset_neurons(self):
+        for layer in [self.input_neurons, self.layer2_neurons, self.layer3_neurons, self.output_layer_neurons]:
+            for neuron in layer:
+                neuron.set_val(0)
 
     def calculate_neuron_vals(self, arr, arr2):
         for connection in arr:
@@ -135,6 +139,8 @@ class Neural_network:
             neuron.set_val(self.relu(neuron.val))
 
     def propagate_forward(self):
+        self.reset_neurons()
+
         #calculates the output of the first layer to each neuron in the second layer
         self.calculate_neuron_vals(self.input_to2connections, self.layer2_neurons)
         

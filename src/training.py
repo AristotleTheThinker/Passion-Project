@@ -2,6 +2,7 @@ import numpy as np
 from scipy.io import loadmat
 import os
 import main
+import pickle
 
 current_dir = os.path.dirname(__file__)  # Src/
 mat_path = os.path.join(current_dir, '../Data/matlab/emnist-letters.mat')
@@ -37,9 +38,12 @@ neural_network = main.Neural_network()
 # for i in range(20):
 #     print(neural_network.layer3to_output_connections[i].weight)
 
-print(train_labels[7])
 
-# for i in range(len(train_images)):
-#     main.fill_inputs_create_target_array(train_images[i],train_labels[i][0])
-#     main.propagate_forward()
-#     main.backpropagation()
+for i in range(len(train_images)):
+    main.fill_inputs_create_target_array(train_images[i],train_labels[i][0])
+    main.propagate_forward()
+    main.backpropagation()
+
+with open("trained_model.pkl", "wb") as f:
+    pickle.dump(neural_network, f)
+
