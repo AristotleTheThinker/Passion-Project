@@ -53,7 +53,7 @@ for i in range(layer2_size):
 
 for neuron_in in input_neurons:
     for neuron_out in layer2_neurons:
-        instance = connection(np.random.uniform(-0.01, 0.01), 0, neuron_in, neuron_out)
+        instance = connection(np.random.uniform(-0.01, 0.01), np.random.uniform(-0.01, 0.01), neuron_in, neuron_out)
         layer1to2connections.append(instance)
 
 for i in range(layer3_size):
@@ -62,7 +62,7 @@ for i in range(layer3_size):
 
 for neuron_in in layer2_neurons:
     for neuron_out in layer3_neurons:
-        instance = connection(np.random.uniform(-0.01, 0.01), 0, neuron_in, neuron_out)
+        instance = connection(np.random.uniform(-0.01, 0.01), np.random.uniform(-0.01, 0.01), neuron_in, neuron_out)
         layer2to3connections.append(instance)
 
 for i in range(output_layer_size):
@@ -71,7 +71,7 @@ for i in range(output_layer_size):
 
 for neuron_in in layer3_neurons:
     for neuron_out in output_layer_neurons:
-        instance = connection(np.random.uniform(-0.01, 0.01), 0, neuron_in, neuron_out)
+        instance = connection(np.random.uniform(-0.01, 0.01), np.random.uniform(-0.01, 0.01), neuron_in, neuron_out)
         layer3to_output_connections.append(instance)
 
 
