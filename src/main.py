@@ -3,6 +3,30 @@ from scipy.io import loadmat
 import os
 import matplotlib.pyplot as plt
 
+class Neuron:
+            def __init__(self, val, bias, index):
+                self.val = val
+                self.bias = bias
+                self.position = index
+
+            def set_val(self, new_val):
+                self.val = new_val
+
+            def add_to_val(self, add_val):
+                self.val += add_val
+
+            def update_bias(self, delta, learning_rate):
+                self.bias += learning_rate * delta
+
+class Connection: #connection has a weight, bias, and is connected to 2 neurons
+            def __init__(self, weight, neuron_in, neuron_out):
+                self.weight = weight
+                self.neuron_in = neuron_in
+                self.neuron_out = neuron_out
+
+            def set_weight(self, new_weight):
+                self.weight = new_weight
+
 class Neural_network:
 
     def __init__(self):
@@ -31,30 +55,6 @@ class Neural_network:
         self.layer3to_output_connections = []
 
         self.target_arr = []
-
-        class Neuron:
-            def __init__(self, val, bias, index):
-                self.val = val
-                self.bias = bias
-                self.position = index
-
-            def set_val(self, new_val):
-                self.val = new_val
-
-            def add_to_val(self, add_val):
-                self.val += add_val
-
-            def update_bias(self, delta, learning_rate):
-                self.bias += learning_rate * delta
-
-        class Connection: #connection has a weight, bias, and is connected to 2 neurons
-            def __init__(self, weight, neuron_in, neuron_out):
-                self.weight = weight
-                self.neuron_in = neuron_in
-                self.neuron_out = neuron_out
-
-            def set_weight(self, new_weight):
-                self.weight = new_weight
 
         #Creates input neuron objects
         for i in range(self.input_layer_size):
@@ -122,7 +122,7 @@ class Neural_network:
             for j in range(len(image[i])):
                 self.input_neurons[28*i+j].set_val(self.input_sigmoid(image[i][j]))
         
-        self.target_arr = [0] * 36
+        self.target_arr = [0] * self.output_layer_size
         self.target_arr[label_num - 1] = 1
 
     def reset_neurons(self):

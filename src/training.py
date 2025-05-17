@@ -1,5 +1,7 @@
 import numpy as np
 from scipy.io import loadmat
+import matplotlib.pyplot as plt
+import time
 import os
 import main
 import pickle
@@ -39,7 +41,6 @@ neural_network = main.Neural_network()
 #     print(neural_network.layer3to_output_connections[i].weight)
 
 
-
 for i in range(20000):
     neural_network.fill_inputs_create_target_array(train_images[i],train_labels[i][0])
     neural_network.propagate_forward()
@@ -52,10 +53,12 @@ with open("trained_model.pkl", "wb") as f:
 
 print("dumped")
 
+indices = np.arange(10000)
+np.random.shuffle(indices)
 correct = 0
 incorrect = 0
-for i in range(10000):
-    neural_network.fill_inputs_create_target_array(test_images[i], test_labels[i][0])
+for i in range(1000):
+    neural_network.fill_inputs_create_target_array(test_images[indices[i]], test_labels[indices[i]][0])
     neural_network.propagate_forward()
     output = 0
     index = 0
@@ -63,7 +66,7 @@ for i in range(10000):
         if neuron.val > output:
             output = neuron.val
             index = neuron.position
-    if index == test_labels[i][0]-1:
+    if index == test_labels[indices[i]][0]-1:
         correct += 1
     else:
         incorrect += 1
@@ -73,5 +76,5 @@ for i in range(10000):
 
 print(correct)
 print(incorrect)
-print(correct/(correct+incorrect) * 100 + "%")
+print(str(correct/(correct+incorrect) * 100) + "%")
 
