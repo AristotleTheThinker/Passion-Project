@@ -28,16 +28,18 @@ test_images = np.transpose(test_images, (0, 2, 1))
 
 neural_network = main.Neural_network()
 
-neural_network.fill_inputs_create_target_array(train_images[0],train_labels[0][0])
-neural_network.propagate_forward()
-for i in range(20):
-    print(neural_network.layer3to_output_connections[i].weight)
-neural_network.backpropagation()
-for i in range(20):
-    print(neural_network.layer3to_output_connections[i].weight)
+# neural_network.fill_inputs_create_target_array(train_images[0],train_labels[0][0])
+# neural_network.propagate_forward()
+# for i in range(20):
+#     print(neural_network.layer3to_output_connections[i].weight)
+# print("______")
+# neural_network.backpropagation()
+# for i in range(20):
+#     print(neural_network.layer3to_output_connections[i].weight)
 
+print(train_labels[7])
 
-#for i in range(len(train_images)):
-#    main.fill_inputs_create_target_array(train_images[i],train_labels[i])
-#    main.propagate_forward()
-#    main.backpropagation()
+# for i in range(len(train_images)):
+#     main.fill_inputs_create_target_array(train_images[i],train_labels[i][0])
+#     main.propagate_forward()
+#     main.backpropagation()
