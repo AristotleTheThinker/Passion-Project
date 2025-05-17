@@ -39,7 +39,8 @@ neural_network = main.Neural_network()
 #     print(neural_network.layer3to_output_connections[i].weight)
 
 
-for i in range(len(train_images)):
+
+for i in range(20000):
     neural_network.fill_inputs_create_target_array(train_images[i],train_labels[i][0])
     neural_network.propagate_forward()
     neural_network.backpropagation()
@@ -53,7 +54,7 @@ print("dumped")
 
 correct = 0
 incorrect = 0
-for i in range(len(test_images)):
+for i in range(10000):
     neural_network.fill_inputs_create_target_array(test_images[i], test_labels[i][0])
     neural_network.propagate_forward()
     output = 0
@@ -66,7 +67,7 @@ for i in range(len(test_images)):
         correct += 1
     else:
         incorrect += 1
-        
+
     if i%1000 == 0:
         print(i)
 
