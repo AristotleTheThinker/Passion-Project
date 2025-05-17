@@ -44,6 +44,9 @@ class Neural_network:
             def add_to_val(self, add_val):
                 self.val += add_val
 
+            def update_bias(self, delta, learning_rate):
+                self.bias += learning_rate * delta
+
         class Connection: #connection has a weight, bias, and is connected to 2 neurons
             def __init__(self, weight, neuron_in, neuron_out):
                 self.weight = weight
@@ -152,7 +155,6 @@ class Neural_network:
     def calculate_output_error(target, actual):
         return target - actual
 
-
     #Backpropagation
     def backpropagation(self):
         
@@ -173,6 +175,10 @@ class Neural_network:
             error = self.calculate_output_error(self.target_arr[i], self.output_layer_neurons[i].val)
             output_error.append(error)
 
+        for i, neuron in enumerate(self.output_layer_neurons):
+            neuron.update_bias(output_error[i], self.learning_rate)
+
+
         #Reset Layer3toOutput Weights + Get Layer 3 errors
         for connection in self.layer3to_output_connections:
             error_index = connection.neuron_out.position
@@ -180,6 +186,10 @@ class Neural_network:
             layer3_error[connection.neuron_in.position] += error * connection.weight
             layer3_error[connection.neuron_in.position] *= self.der_relu(self.layer3_neurons[connection.neuron_in.position].val)
             connection.set_weight(connection.weight + self.learning_rate * error * connection.neuron_in.val)
+
+        for i, neuron in enumerate(self.layer3_neurons):
+            neuron.update_bias(layer3_error[i], self.learning_rate)
+
 
         #Reset Layer2to3 Weights + Get Layer 2 errors
         for connection in self.layer2to3connections:
@@ -189,11 +199,12 @@ class Neural_network:
             layer2_error[connection.neuron_in.position] *= self.der_relu(self.layer2_neurons[connection.neuron_in.position].val)
             connection.set_weight(connection.weight + self.learning_rate * error * connection.neuron_in.val)
 
+        for i, neuron in enumerate(self.layer2_neurons):
+            neuron.update_bias(layer2_error[i], self.learning_rate)
+
+
         #Reset InputTo2 Weights
         for connection in self.input_to2connections:
             error_index = connection.neuron_out.position
             error = layer2_error[error_index]
             connection.set_weight(connection.weight + self.learning_rate * error * connection.neuron_in.val)
-
-
-        

@@ -40,10 +40,30 @@ neural_network = main.Neural_network()
 
 
 for i in range(len(train_images)):
-    main.fill_inputs_create_target_array(train_images[i],train_labels[i][0])
-    main.propagate_forward()
-    main.backpropagation()
+    neural_network.fill_inputs_create_target_array(train_images[i],train_labels[i][0])
+    neural_network.propagate_forward()
+    neural_network.backpropagation()
 
 with open("trained_model.pkl", "wb") as f:
     pickle.dump(neural_network, f)
+
+correct = 0
+incorrect = 0
+for i in range(len(test_images)):
+    neural_network.fill_inputs_create_target_array(test_images[i], test_labels[i][0])
+    neural_network.propagate_forward()
+    output = 0
+    index = 0
+    for neuron in neural_network.output_layer_neurons:
+        if neuron.val > output:
+            output = neuron.val
+            index = neuron.position
+    if index == test_labels[i][0]-1:
+        correct += 1
+    else:
+        incorrect += 1
+
+print(correct)
+print(incorrect)
+print(correct/(correct+incorrect) * 100 + "%")
 
