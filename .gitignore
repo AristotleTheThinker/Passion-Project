@@ -11,3 +11,5 @@ venv/
 # Environment/config files
 .env
 
+.DS_Store
+

@@ -1,6 +1,5 @@
 from gettext import install
 import numpy as np
-import torch
 
 input_layer_size = 784 #input of a 28x28 grid
 
@@ -15,6 +14,14 @@ input_neurons = []
 layer2_neurons = []
 
 layer1to2connections = []
+
+layer3_neurons = []
+
+layer2to3connections = []
+
+output_layer_neurons = []
+
+layer3to_output_connections = []
 
 class neuron:
     def __init__(self, val):
@@ -48,5 +55,23 @@ for neuron_in in input_neurons:
     for neuron_out in layer2_neurons:
         instance = connection(np.random.uniform(-0.01, 0.01), 0, neuron_in, neuron_out)
         layer1to2connections.append(instance)
+
+for i in range(layer3_size):
+    instance = neuron(0)
+    layer3_neurons.append(instance)
+
+for neuron_in in layer2_neurons:
+    for neuron_out in layer3_neurons:
+        instance = connection(np.random.uniform(-0.01, 0.01), 0, neuron_in, neuron_out)
+        layer2to3connections.append(instance)
+
+for i in range(output_layer_size):
+    instance = neuron(0)
+    output_layer_neurons.append(instance)
+
+for neuron_in in layer3_neurons:
+    for neuron_out in output_layer_neurons:
+        instance = connection(np.random.uniform(-0.01, 0.01), 0, neuron_in, neuron_out)
+        layer3to_output_connections.append(instance)
 
 
