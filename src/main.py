@@ -121,7 +121,7 @@ class Neural_network:
 
         for i in range(36):
             self.target_arr.append(0)
-        self.target_arr[label_num-1] = 1
+        self.target_arr[label_num[0]-1] = 1
 
     def calculate_neuron_vals(self, arr, arr2):
         for connection in arr:
