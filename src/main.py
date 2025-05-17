@@ -128,7 +128,7 @@ class Neural_network:
             input = connection.neuron_in.val
             weight = connection.weight
             output = input * weight
-            connection.neuron_out.add_val(output)
+            connection.neuron_out.add_to_val(output)
 
         for neuron in arr2:
             neuron.add_to_val(neuron.bias)
