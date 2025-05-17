@@ -12,7 +12,7 @@ class Neural_network:
 
         self.layer3_size = 64 #third layer has 64 neurons, can change
 
-        self.output_layer_size = 36 #outputs a number or character
+        self.output_layer_size = 26 #outputs a number or character
 
         self.learning_rate = 0.01
 

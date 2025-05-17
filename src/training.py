@@ -43,9 +43,13 @@ for i in range(len(train_images)):
     neural_network.fill_inputs_create_target_array(train_images[i],train_labels[i][0])
     neural_network.propagate_forward()
     neural_network.backpropagation()
+    if i%1000 == 0:
+        print(i)
 
 with open("trained_model.pkl", "wb") as f:
     pickle.dump(neural_network, f)
+
+print("dumped")
 
 correct = 0
 incorrect = 0
@@ -62,6 +66,9 @@ for i in range(len(test_images)):
         correct += 1
     else:
         incorrect += 1
+        
+    if i%1000 == 0:
+        print(i)
 
 print(correct)
 print(incorrect)
