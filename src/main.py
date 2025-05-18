@@ -100,7 +100,10 @@ class Neural_network:
 
     @staticmethod
     def input_sigmoid(x):
-        return x/255.0
+        if x > 128.0:
+            return 1
+        else:
+            return 0
        
     @staticmethod    
     def relu(x):
@@ -113,15 +116,13 @@ class Neural_network:
         else:
             return 1
         
-    
-
-
-    def fill_inputs_create_target_array(self, image, label_num):
+    def fill_inputs(self, image):
         #Fills input neurons with data
         for i in range(len(image)):
             for j in range(len(image[i])):
                 self.input_neurons[28*i+j].set_val(self.input_sigmoid(image[i][j]))
-        
+
+    def create_target_array(self, label_num):
         self.target_arr = [0] * self.output_layer_size
         self.target_arr[label_num - 1] = 1
 
