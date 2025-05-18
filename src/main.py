@@ -100,10 +100,7 @@ class Neural_network:
 
     @staticmethod
     def input_sigmoid(x):
-        if x > 128:
-            return 1
-        else:
-            return 0
+        return x/255.0
        
     @staticmethod    
     def relu(x):
@@ -111,10 +108,13 @@ class Neural_network:
 
     @staticmethod
     def der_relu(x):
-        if x == 0:
+        if x <= 0:
             return 0
         else:
             return 1
+        
+    
+
 
     def fill_inputs_create_target_array(self, image, label_num):
         #Fills input neurons with data
@@ -126,7 +126,7 @@ class Neural_network:
         self.target_arr[label_num - 1] = 1
 
     def reset_neurons(self):
-        for layer in [self.input_neurons, self.layer2_neurons, self.layer3_neurons, self.output_layer_neurons]:
+        for layer in [self.layer2_neurons, self.layer3_neurons, self.output_layer_neurons]:
             for neuron in layer:
                 neuron.set_val(0)
 
@@ -180,24 +180,32 @@ class Neural_network:
 
 
         #Reset Layer3toOutput Weights + Get Layer 3 errors
+        raw_layer3_error = [0.0] * self.layer3_size
         for connection in self.layer3to_output_connections:
-            error_index = connection.neuron_out.position
-            error = output_error[error_index]
-            layer3_error[connection.neuron_in.position] += error * connection.weight
-            layer3_error[connection.neuron_in.position] *= self.der_relu(self.layer3_neurons[connection.neuron_in.position].val)
+            out_index = connection.neuron_out.position
+            in_index = connection.neuron_in.position
+            error = output_error[out_index]
+            raw_layer3_error[in_index] += error * connection.weight
             connection.set_weight(connection.weight + self.learning_rate * error * connection.neuron_in.val)
+
+        for i in range(self.layer3_size):
+            layer3_error[i] = raw_layer3_error[i] * self.der_relu(self.layer3_neurons[i].val)
 
         for i, neuron in enumerate(self.layer3_neurons):
             neuron.update_bias(layer3_error[i], self.learning_rate)
 
 
         #Reset Layer2to3 Weights + Get Layer 2 errors
+        raw_layer2_error = [0.0] * self.layer2_size
         for connection in self.layer2to3connections:
-            error_index = connection.neuron_out.position
-            error = layer3_error[error_index]
-            layer2_error[connection.neuron_in.position] += error * connection.weight
-            layer2_error[connection.neuron_in.position] *= self.der_relu(self.layer2_neurons[connection.neuron_in.position].val)
+            out_index = connection.neuron_out.position
+            in_index = connection.neuron_in.position
+            error = layer3_error[out_index]
+            raw_layer2_error[in_index] += error * connection.weight
             connection.set_weight(connection.weight + self.learning_rate * error * connection.neuron_in.val)
+
+        for i in range(self.layer2_size):
+            layer2_error[i] = raw_layer2_error[i] * self.der_relu(self.layer2_neurons[i].val)
 
         for i, neuron in enumerate(self.layer2_neurons):
             neuron.update_bias(layer2_error[i], self.learning_rate)
@@ -205,6 +213,6 @@ class Neural_network:
 
         #Reset InputTo2 Weights
         for connection in self.input_to2connections:
-            error_index = connection.neuron_out.position
-            error = layer2_error[error_index]
+            out_index = connection.neuron_out.position
+            error = layer2_error[out_index]
             connection.set_weight(connection.weight + self.learning_rate * error * connection.neuron_in.val)

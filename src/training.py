@@ -29,52 +29,53 @@ test_images = test_images.reshape((-1, 28, 28)).astype(np.uint8)
 train_images = np.transpose(train_images, (0, 2, 1))
 test_images = np.transpose(test_images, (0, 2, 1))
 
-neural_network = main.Neural_network()
+def train(num):
+    for i in range(num):
+        neural_network.fill_inputs_create_target_array(train_images[i],train_labels[i][0])
+        neural_network.propagate_forward()
+        neural_network.backpropagation()
+        if i%500 == 0:
+            output_vals = [round(n.val, 2) for n in neural_network.output_layer_neurons]
+            print("Pred:", np.argmax(output_vals), "Target:", train_labels[i][0]-1, "Out:", output_vals)
+            print(i)
+def dump(file_name):
+    with open(file_name, "wb") as f:
+        pickle.dump(neural_network, f)
+    print("dumped")
 
-# neural_network.fill_inputs_create_target_array(train_images[0],train_labels[0][0])
-# neural_network.propagate_forward()
-# for i in range(20):
-#     print(neural_network.layer3to_output_connections[i].weight)
-# print("______")
-# neural_network.backpropagation()
-# for i in range(20):
-#     print(neural_network.layer3to_output_connections[i].weight)
+def load(model):
+    with open(model, "rb") as f:   
+        return pickle.load(f)
 
+def test(num):
+    indices = np.arange(20800)
+    np.random.shuffle(indices)
+    correct = 0
+    incorrect = 0
+    for i in range(num):
+        neural_network.fill_inputs_create_target_array(test_images[indices[i]], test_labels[indices[i]][0])
+        neural_network.propagate_forward()
+        output = 0
+        index = 0
+        for neuron in neural_network.output_layer_neurons:
+            if neuron.val > output:
+                output = neuron.val
+                index = neuron.position
+        print(index, test_labels[indices[i]][0]-1)
+        if index == test_labels[indices[i]][0]-1:
+            correct += 1
+        else:
+            incorrect += 1
 
-for i in range(20000):
-    neural_network.fill_inputs_create_target_array(train_images[i],train_labels[i][0])
-    neural_network.propagate_forward()
-    neural_network.backpropagation()
-    if i%1000 == 0:
-        print(i)
+        if i%1000 == 0:
+            print(i)
 
-with open("trained_model.pkl", "wb") as f:
-    pickle.dump(neural_network, f)
+    print(correct)
+    print(incorrect)
+    print(str(correct/(correct+incorrect) * 100) + "%")
 
-print("dumped")
-
-indices = np.arange(10000)
-np.random.shuffle(indices)
-correct = 0
-incorrect = 0
-for i in range(1000):
-    neural_network.fill_inputs_create_target_array(test_images[indices[i]], test_labels[indices[i]][0])
-    neural_network.propagate_forward()
-    output = 0
-    index = 0
-    for neuron in neural_network.output_layer_neurons:
-        if neuron.val > output:
-            output = neuron.val
-            index = neuron.position
-    if index == test_labels[indices[i]][0]-1:
-        correct += 1
-    else:
-        incorrect += 1
-
-    if i%1000 == 0:
-        print(i)
-
-print(correct)
-print(incorrect)
-print(str(correct/(correct+incorrect) * 100) + "%")
-
+#neural_network = main.Neural_network()
+#train(100000)
+#dump("trained_model.pkl")
+neural_network = load("trained_model_10000.pkl")
+test(2000)
