@@ -100,10 +100,7 @@ class Neural_network:
 
     @staticmethod
     def input_sigmoid(x):
-        if x > 128.0:
-            return 1
-        else:
-            return 0
+        return x/255.0
        
     @staticmethod    
     def relu(x):
