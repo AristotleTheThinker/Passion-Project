@@ -1,11 +1,13 @@
 const container = document.querySelector('.container')
 const guess_button = document.querySelector('.guess_button')
 const clear_button = document.querySelector('.clear_button')
+const erase_checkbox = document.querySelector('.erase')
 var pixels = []
 var image = []
 
 var draw = false;
 var guessing = false;
+var erase = false;
 
 function populate() {
     for (let r = 0; r < 28; r++) {
@@ -16,11 +18,13 @@ function populate() {
             div.addEventListener('mouseover',function(){
                 if(!draw) return
                 if(guessing) return
-                div.style.backgroundColor = '#ffffff'
+                if (erase) div.style.backgroundColor = '#000000'
+                else div.style.backgroundColor = '#ffffff'
             })
             div.addEventListener('click',function(){
                 if(guessing) return
-                div.style.backgroundColor = '#ffffff'
+                if (erase) div.style.backgroundColor = '#000000'
+                else div.style.backgroundColor = '#ffffff'
             })
             row.push(div)
             container.appendChild(div)
@@ -48,6 +52,14 @@ function guess(){
     callPythonFunction(image)
 }
 
+function clear(){
+    for(let r = 0; r < pixels.length; r++){
+        for(let c = 0; c < pixels[r].length; c++){
+            pixels[r][c].style.backgroundColor = "#000000"
+        }
+    }
+}
+
 window.addEventListener("mousedown", function(){
     draw = true
 })
@@ -58,6 +70,14 @@ window.addEventListener("mouseup", function(){
 
 guess_button.addEventListener('click', function(){
     guess();
+})
+
+clear_button.addEventListener('click', function(){
+    clear()
+})
+
+erase_checkbox.addEventListener('click', function(){
+    erase = erase_checkbox.checked
 })
 
 populate()
