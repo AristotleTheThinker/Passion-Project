@@ -29,6 +29,8 @@ test_images = test_images.reshape((-1, 28, 28)).astype(np.uint8)
 train_images = np.transpose(train_images, (0, 2, 1))
 test_images = np.transpose(test_images, (0, 2, 1))
 
+let_nums = [[0 for i in range(2)] for j in range(26)]
+
 def train(num):
     for i in range(num):
         neural_network.fill_inputs_create_target_array(train_images[i],train_labels[i][0])
@@ -53,7 +55,9 @@ def test(num):
     correct = 0
     incorrect = 0
     for i in range(num):
-        neural_network.fill_inputs_create_target_array(test_images[indices[i]], test_labels[indices[i]][0])
+        label_num = test_labels[indices[i]][0]
+        target = label_num-1
+        neural_network.fill_inputs_create_target_array(test_images[indices[i]], label_num)
         neural_network.propagate_forward()
         output = 0
         index = 0
@@ -61,18 +65,21 @@ def test(num):
             if neuron.val > output:
                 output = neuron.val
                 index = neuron.position
-        print(index, test_labels[indices[i]][0]-1)
-        if index == test_labels[indices[i]][0]-1:
+        if index == target:
             correct += 1
+            let_nums[target][0] += 1
         else:
             incorrect += 1
+            let_nums[target][1] += 1
 
         if i%1000 == 0:
             print(i)
 
-    print(correct)
-    print(incorrect)
+    print("Correct: " + str(correct))
+    print("Incorrect: " + str(incorrect))
     print(str(correct/(correct+incorrect) * 100) + "%")
+    for i, pair in enumerate(let_nums):
+        print(chr(65+i) + ": " + str(round(pair[0]/(pair[0]+pair[1])*100,2)) + "%")
 
 #neural_network = main.Neural_network()
 #train(100000)
