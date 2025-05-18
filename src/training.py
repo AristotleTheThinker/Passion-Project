@@ -106,12 +106,12 @@ class Testing:
         for i, pair in enumerate(self.let_nums):
             print(chr(65+i) + ": " + str(round(pair[0]/(pair[0]+pair[1])*100,2)) + "%")
 
-    def attempt(neural_network, image):
-        neural_network.fill_inputs(image)
-        neural_network.propagate_forward()
+    def attempt(self, image):
+        self.neural_network.fill_inputs(image)
+        self.neural_network.propagate_forward()
         max_prob = 0
         output = 0
-        for neuron in neural_network.output_layer_neurons:
+        for neuron in self.neural_network.output_layer_neurons:
             if neuron.val > max_prob:
                 max_prob = neuron.val
                 output = neuron.position
@@ -125,6 +125,6 @@ class Testing:
 # training.dump("trained_model.pkl")
 
 
-neural_network_test = Testing.load("trained_model _BW_10000.pkl")
-testing = Testing(neural_network_test)
-testing.test(2000)
+# neural_network_test = Testing.load("trained_model _BW_10000.pkl")
+# testing = Testing(neural_network_test)
+# testing.test(2000)
