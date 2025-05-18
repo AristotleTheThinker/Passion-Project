@@ -118,13 +118,12 @@ class Testing:
         return output
 
 
-
 # neural_network_train = main.Neural_network()
 # training = Training(neural_network_train)
 # training.train(1000)
-# training.dump("trained_model.pkl")
+# training.dump("models/trained_model.pkl")
 
 
-# neural_network_test = Testing.load("trained_model _BW_10000.pkl")
+# neural_network_test = Testing.load("models/trained_model_10000.pkl")
 # testing = Testing(neural_network_test)
 # testing.test(2000)
