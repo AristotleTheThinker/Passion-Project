@@ -8,6 +8,16 @@ var image = []
 var draw = false;
 var guessing = false;
 var erase = false;
+function brush(r, c){
+    for(let row = Math.max(r-1, 0); row < Math.min(r+2,28); row++){
+        for(let col = Math.max(c-1, 0); col < Math.min(c+2, 28); col++){
+            if(!(row == r && col == c)){
+                values = getRGBValues(pixels[row][col].style.backgroundColor)
+                pixels[row][col].style.backgroundColor = "rgb(" + Math.min(values[0] + 63,255) + "," + Math.min(values[1] + 63,255) + "," + Math.min(values[2] + 63,255) + ")"
+            }
+        }
+    }
+}
 
 function populate() {
     for (let r = 0; r < 28; r++) {
@@ -15,22 +25,40 @@ function populate() {
         for(let c = 0; c < 28; c++){
             const div = document.createElement('div')
             div.classList.add('pixel')
+            div.style.backgroundColor = "#000000"
+            div.dataset.row = r
+            div.dataset.col = c
+            row.push(div)
+            container.appendChild(div)
+        }
+        pixels.push(row)
+    }
+
+    for(let r = 0; r < pixels.length; r++){
+        for(let c = 0; c < pixels[r].length; c++){
+            let div = pixels[r][c]
             div.addEventListener('mouseover',function(){
-                if(!draw) return
-                if(guessing) return
-                if (erase) div.style.backgroundColor = '#000000'
-                else div.style.backgroundColor = '#ffffff'
+                if(!draw) return //no mouseclick
+                if(guessing) return //
+                if (erase){ //Erasing
+                    div.style.backgroundColor = '#000000'
+                }else{//Draw
+                    div.style.backgroundColor = '#ffffff'
+                    brush(r, c)
+                }
             })
             div.addEventListener('click',function(){
                 if(guessing) return
                 if (erase) div.style.backgroundColor = '#000000'
                 else div.style.backgroundColor = '#ffffff'
             })
-            row.push(div)
-            container.appendChild(div)
         }
-        pixels.push(row)
     }
+}
+
+function getRGBValues(rgbString) {
+    const values = rgbString.substring(4, rgbString.length - 1).split(',').map(Number);
+    return values;
 }
 
 function guess(){
@@ -40,15 +68,12 @@ function guess(){
         for (let c = 0; c < pixels[r].length; c++) {
             const pixel = pixels[r][c];
             var value = 0;
-            if(pixel.style.backgroundColor == "rgb(255, 255, 255)"){
-                value = 255;
-            }else{
-                value = 0;
-            }
+            value = getRGBValues(pixel.style.backgroundColor)[0]
             row.push(value)
         }
         image.push(row)
     }
+    console.log(image)
     callPythonFunction(image)
 }
 
