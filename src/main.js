@@ -2,12 +2,16 @@ const container = document.querySelector('.container')
 const guess_button = document.querySelector('.guess_button')
 const clear_button = document.querySelector('.clear_button')
 const erase_checkbox = document.querySelector('.erase')
+const dropdown = document.querySelector('#model_selector')
+const guessP = document.querySelector('#guess')
 var pixels = []
 var image = []
 
 var draw = false;
 var guessing = false;
 var erase = false;
+
+//Grayscale brush affect
 function brush(r, c){
     for(let row = Math.max(r-1, 0); row < Math.min(r+2,28); row++){
         for(let col = Math.max(c-1, 0); col < Math.min(c+2, 28); col++){
@@ -19,7 +23,9 @@ function brush(r, c){
     }
 }
 
+//Sets up grid
 function populate() {
+    //populates it with pixels
     for (let r = 0; r < 28; r++) {
         var row = []
         for(let c = 0; c < 28; c++){
@@ -34,6 +40,7 @@ function populate() {
         pixels.push(row)
     }
 
+    //adds event listeners for every pixel
     for(let r = 0; r < pixels.length; r++){
         for(let c = 0; c < pixels[r].length; c++){
             let div = pixels[r][c]
@@ -56,11 +63,22 @@ function populate() {
     }
 }
 
+function populateDropdown(arr){
+    for(let i = 0; i < arr.length; i++){
+        const option = document.createElement('option')
+        option.value = arr[i];
+        option.innerHTML = arr[i];
+        dropdown.appendChild(option)
+    }
+}
+
+//Helper function to get rgb values as array from string
 function getRGBValues(rgbString) {
     const values = rgbString.substring(4, rgbString.length - 1).split(',').map(Number);
     return values;
 }
 
+//Gets image values and sends request for network
 function guess(){
     image = []
     for(let r = 0; r < pixels.length; r++){
@@ -72,11 +90,16 @@ function guess(){
             row.push(value)
         }
         image.push(row)
-    }
-    console.log(image)
-    callPythonFunction(image)
+    }//Gets the image as 2D array filled with [0,255] values
+    callNetwork(image)//Calls the python
+    guessP.innerHTML = "Guessing"
 }
 
+function showGuess(letter){
+    guessP.innerHTML = letter
+}
+
+//clears the canvas
 function clear(){
     for(let r = 0; r < pixels.length; r++){
         for(let c = 0; c < pixels[r].length; c++){
@@ -106,10 +129,27 @@ erase_checkbox.addEventListener('click', function(){
 })
 
 populate()
+getFiles()
 
 // Example function to call your Python endpoint
-function callPythonFunction(arg) {
-    fetch('http://localhost:5000/call-python', {
+function callNetwork(arg) {
+    fetch('http://localhost:5000/call-network', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ arg: arg , model: dropdown.value})
+    })
+    .then(response => response.json())
+    .then(data => {
+        showGuess(data.message);
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Example function to call your Python endpoint
+function getFiles(arg) {
+    fetch('http://localhost:5000/call-files', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -118,8 +158,7 @@ function callPythonFunction(arg) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log("Python response:", data.message);
+        populateDropdown(data.message);
     })
     .catch(error => console.error('Error:', error));
 }
-

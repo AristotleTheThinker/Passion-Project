@@ -7,11 +7,26 @@
     <title>Document</title>
 </head>
 <body>
+    <nav class="navbar">
+        <button type="button" class="guess_button">Guess</button>
+        <button type="button" class="clear_button">Clear</button>
+        <div class="erase_div">
+            <label for="erase">Erase</label>
+            <input type="checkbox" id="erase" class="erase">
+        </div>
+        <div class = file_picker>
+            <label for="model_selector">Model Selector:</label>
+            <select name="model" id="model_selector">
+                <option value=""></option>
+            </select>
+        </div>
+        <div class="guess">
+            <p>Letter Drawn: </p>
+            <p id="guess"></p>
+        </div>
+    </nav>
     <div class="container">
     </div>
-    <button type="button" class="guess_button">Guess</button>
-    <button type="button" class="clear_button">Clear</button>
-    <input type="checkbox" class="erase">
     <script src="main.js"></script>
 </body>
 </html>
