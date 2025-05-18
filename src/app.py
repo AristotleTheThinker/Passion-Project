@@ -13,7 +13,7 @@ CORS(app)  # Allow requests from JS (like http://localhost:5500)
 def call_python():
     data = request.json
     arg = data.get('arg', '')
-    neural_network = training.Testing.load("trained_model _BW_10000.pkl")
+    neural_network = training.Testing.load(model)
     tester = training.Testing(neural_network)
     result = tester.attempt(arg)
     print(result)
