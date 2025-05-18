@@ -1,0 +1,35 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+html, body{
+    height: 100%;
+}
+body{
+    background-color: grey;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.container{
+    background-color: rgb(28,28,28);
+    width: 800px;
+    border-radius: 3px;
+}
+
+
+
+.container{
+    height: 800px;
+    display: grid;
+    grid-template-columns: repeat(28, 1fr);
+    grid-template-rows: repeat(28, 1fr);
+    gap: 3px;
+    padding: 3px;
+}
+
+.pixel{
+    background-color: #000000;
+    border-radius: 2px;
+}
