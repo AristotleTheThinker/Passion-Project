@@ -6,83 +6,125 @@ import os
 import main
 import pickle
 
-current_dir = os.path.dirname(__file__)  # Src/
-mat_path = os.path.join(current_dir, '../Data/matlab/emnist-letters.mat')
+class Training:
+    def __init__(self, neural_network):
+        self.neural_network = neural_network
 
-digits_mat = loadmat(mat_path)
+        self.current_dir = os.path.dirname(__file__)  # Src/
+        self.mat_path = os.path.join(self.current_dir, '../Data/matlab/emnist-letters.mat')
 
-data = digits_mat['dataset']
+        self.digits_mat = loadmat(self.mat_path)
 
-# Training data
-train_images = data['train'][0, 0]['images'][0, 0]
-train_labels = data['train'][0, 0]['labels'][0, 0]
+        self.data = self.digits_mat['dataset']
 
-# Testing data
-test_images = data['test'][0, 0]['images'][0, 0]
-test_labels = data['test'][0, 0]['labels'][0, 0]
+        # Training data
+        self.train_images = self.data['train'][0, 0]['images'][0, 0]
+        self.train_labels = self.data['train'][0, 0]['labels'][0, 0]
 
-# Reshape images to 28x28
-train_images = train_images.reshape((-1, 28, 28)).astype(np.uint8)
-test_images = test_images.reshape((-1, 28, 28)).astype(np.uint8)
+        # Reshape images to 28x28
+        self.train_images = self.train_images.reshape((-1, 28, 28)).astype(np.uint8)
 
-#Rotate the images
-train_images = np.transpose(train_images, (0, 2, 1))
-test_images = np.transpose(test_images, (0, 2, 1))
+        #Rotate the images
+        self.train_images = np.transpose(self.train_images, (0, 2, 1))
 
-let_nums = [[0 for i in range(2)] for j in range(26)]
+    def train(self, num):
+        for i in range(num):
+            self.neural_network.fill_inputs(self.train_images[i])
+            self.neural_network.create_target_array(self.train_labels[i][0])
+            self.neural_network.propagate_forward()
+            self.neural_network.backpropagation()
+            if i%500 == 0:
+                output_vals = [round(n.val, 2) for n in self.neural_network.output_layer_neurons]
+                print("Pred:", np.argmax(output_vals), "Target:", self.train_labels[i][0]-1, "Out:", output_vals)
+                print(i)
 
-def train(num):
-    for i in range(num):
-        neural_network.fill_inputs_create_target_array(train_images[i],train_labels[i][0])
+    def dump(self, file_name):
+        with open(file_name, "wb") as f:
+            pickle.dump(self.neural_network, f)
+        print("dumped")
+
+class Testing:
+
+    def __init__(self, neural_network):
+        self.neural_network = neural_network
+
+        #Import Dataset
+        self.current_dir = os.path.dirname(__file__)  # Src/
+        self.mat_path = os.path.join(self.current_dir, '../Data/matlab/emnist-letters.mat')
+
+        self.digits_mat = loadmat(self.mat_path)
+
+        self.data = self.digits_mat['dataset']
+
+        # Testing data
+        self.test_images = self.data['test'][0, 0]['images'][0, 0]
+        self.test_labels = self.data['test'][0, 0]['labels'][0, 0]
+
+        # Reshape images to 28x28
+        self.test_images = self.test_images.reshape((-1, 28, 28)).astype(np.uint8)
+
+        #Rotate the images
+        self.test_images = np.transpose(self.test_images, (0, 2, 1))
+
+        self.let_nums = [[0 for i in range(2)] for j in range(26)]
+
+    @staticmethod
+    def load(model):
+        with open(model, "rb") as f:   
+            return pickle.load(f)
+
+    def test(self, num):
+        indices = np.arange(20800)
+        np.random.shuffle(indices)
+        correct = 0
+        incorrect = 0
+        for i in range(num):
+            label_num = self.test_labels[indices[i]][0]
+            target = label_num-1
+            self.neural_network.fill_inputs(self.test_images[indices[i]])
+            self.neural_network.create_target_array(label_num)
+            self.neural_network.propagate_forward()
+            max_prob = 0
+            output = 0
+            for neuron in self.neural_network.output_layer_neurons:
+                if neuron.val > max_prob:
+                    max_prob = neuron.val
+                    output = neuron.position
+            if output == target:
+                correct += 1
+                self.let_nums[target][0] += 1
+            else:
+                incorrect += 1
+                self.let_nums[target][1] += 1
+
+            if i%1000 == 0:
+                print(i)
+
+        print("Correct: " + str(correct))
+        print("Incorrect: " + str(incorrect))
+        print(str(correct/(correct+incorrect) * 100) + "%")
+        for i, pair in enumerate(self.let_nums):
+            print(chr(65+i) + ": " + str(round(pair[0]/(pair[0]+pair[1])*100,2)) + "%")
+
+    def attempt(neural_network, image):
+        neural_network.fill_inputs(image)
         neural_network.propagate_forward()
-        neural_network.backpropagation()
-        if i%500 == 0:
-            output_vals = [round(n.val, 2) for n in neural_network.output_layer_neurons]
-            print("Pred:", np.argmax(output_vals), "Target:", train_labels[i][0]-1, "Out:", output_vals)
-            print(i)
-def dump(file_name):
-    with open(file_name, "wb") as f:
-        pickle.dump(neural_network, f)
-    print("dumped")
-
-def load(model):
-    with open(model, "rb") as f:   
-        return pickle.load(f)
-
-def test(num):
-    indices = np.arange(20800)
-    np.random.shuffle(indices)
-    correct = 0
-    incorrect = 0
-    for i in range(num):
-        label_num = test_labels[indices[i]][0]
-        target = label_num-1
-        neural_network.fill_inputs_create_target_array(test_images[indices[i]], label_num)
-        neural_network.propagate_forward()
+        max_prob = 0
         output = 0
-        index = 0
         for neuron in neural_network.output_layer_neurons:
-            if neuron.val > output:
-                output = neuron.val
-                index = neuron.position
-        if index == target:
-            correct += 1
-            let_nums[target][0] += 1
-        else:
-            incorrect += 1
-            let_nums[target][1] += 1
+            if neuron.val > max_prob:
+                max_prob = neuron.val
+                output = neuron.position
+        return output
 
-        if i%1000 == 0:
-            print(i)
 
-    print("Correct: " + str(correct))
-    print("Incorrect: " + str(incorrect))
-    print(str(correct/(correct+incorrect) * 100) + "%")
-    for i, pair in enumerate(let_nums):
-        print(chr(65+i) + ": " + str(round(pair[0]/(pair[0]+pair[1])*100,2)) + "%")
 
-#neural_network = main.Neural_network()
-#train(100000)
-#dump("trained_model.pkl")
-neural_network = load("trained_model_10000.pkl")
-test(2000)
+# neural_network_train = main.Neural_network()
+# training = Training(neural_network_train)
+# training.train(1000)
+# training.dump("trained_model.pkl")
+
+
+neural_network_test = Testing.load("trained_model _BW_10000.pkl")
+testing = Testing(neural_network_test)
+testing.test(2000)
