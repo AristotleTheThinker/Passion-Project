@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import main as main
 import training as training
@@ -8,6 +8,11 @@ default_model = "trained_model_10000.pkl"
 
 app = Flask(__name__)
 CORS(app)  # Allow requests from JS (like http://localhost:5500)
+
+
+@app.route('/')
+def serve_index():
+    return send_from_directory('.', 'index.html')
 
 def get_file_names(folder_path):
   file_names = []
