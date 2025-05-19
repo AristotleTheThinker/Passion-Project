@@ -1,12 +1,12 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-import main as main
-import training as training
+from . import main as main
+from . import training as training
 import os
 
 default_model = "trained_model_10000.pkl"
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 CORS(app)  # Allow requests from JS (like http://localhost:5500)
 
 
