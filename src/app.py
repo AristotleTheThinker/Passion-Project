@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from . import main as main
-from . import training as training
+import main as main
+import training as training
 import os
 
 default_model = "trained_model_10000.pkl"
