@@ -11,7 +11,7 @@ class Training:
         self.neural_network = neural_network
 
         self.current_dir = os.path.dirname(__file__)  # Src/
-        self.mat_path = os.path.join(self.current_dir, '../Data/matlab/emnist-letters.mat')
+        self.mat_path = os.path.join(self.current_dir, '../data/matlab/emnist-letters.mat')
 
         self.digits_mat = loadmat(self.mat_path)
 
@@ -50,7 +50,7 @@ class Testing:
 
         #Import Dataset
         self.current_dir = os.path.dirname(__file__)  # Src/
-        self.mat_path = os.path.join(self.current_dir, '../Data/matlab/emnist-letters.mat')
+        self.mat_path = os.path.join(self.current_dir, '../data/matlab/emnist-letters.mat')
 
         self.digits_mat = loadmat(self.mat_path)
 
