@@ -4,6 +4,11 @@ const clear_button = document.querySelector('.clear_button')
 const erase_checkbox = document.querySelector('.erase')
 const dropdown = document.querySelector('#model_selector')
 const guessP = document.querySelector('#guess')
+
+const API_BASE = window.location.hostname.includes("localhost")
+  ? "http://localhost:5000"
+  : "https://passion-project-0z09.onrender.com/";
+
 var pixels = []
 var image = []
 
@@ -133,7 +138,7 @@ getFiles()
 
 // Example function to call your Python endpoint
 function callNetwork(arg) {
-    fetch('http://localhost:5000/call-network', {
+    fetch(`${API_BASE}/call-network`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -149,7 +154,7 @@ function callNetwork(arg) {
 
 // Example function to call your Python endpoint
 function getFiles(arg) {
-    fetch('http://localhost:5000/call-files', {
+    fetch(`${API_BASE}/call-files`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
