@@ -7,8 +7,11 @@ import main
 import pickle
 
 class Training:
-    def __init__(self, neural_network):
+    def __init__(self, neural_network, typeP):
         self.neural_network = neural_network
+
+        self.type = typeP
+        self.subtract = 0 if self.type == "digits" else 1
 
         self.current_dir = os.path.dirname(__file__)  # Src/
         self.mat_path = os.path.join(self.current_dir, '../data/matlab/emnist-letters.mat')
@@ -35,8 +38,13 @@ class Training:
             self.neural_network.backpropagation()
             if i%500 == 0:
                 output_vals = [round(n.val, 2) for n in self.neural_network.output_layer_neurons]
-                print("Pred:", np.argmax(output_vals), "Target:", self.train_labels[i][0]-1, "Out:", output_vals)
+                print("Pred:", np.argmax(output_vals), "Target:", self.train_labels[i][0]-self.subtract, "Out:", output_vals)
                 print(i)
+
+    @staticmethod
+    def load(model):
+        with open(model, "rb") as f:   
+            return pickle.load(f)
 
     def dump(self, file_name):
         with open(file_name, "wb") as f:
@@ -45,8 +53,12 @@ class Training:
 
 class Testing:
 
-    def __init__(self, neural_network):
+    def __init__(self, neural_network,typeP):
         self.neural_network = neural_network
+
+        self.type = typeP
+        self.subtract = 1 if self.type == "letters" else 0
+        self.range = neural_network.output_layer_size
 
         #Import Dataset
         self.current_dir = os.path.dirname(__file__)  # Src/
@@ -66,7 +78,7 @@ class Testing:
         #Rotate the images
         self.test_images = np.transpose(self.test_images, (0, 2, 1))
 
-        self.let_nums = [[0 for i in range(2)] for j in range(26)]
+        self.let_nums = [[0 for i in range(2)] for j in range(self.range)]
 
     @staticmethod
     def load(model):
@@ -80,7 +92,7 @@ class Testing:
         incorrect = 0
         for i in range(num):
             label_num = self.test_labels[indices[i]][0]
-            target = label_num-1
+            target = label_num-self.subtract
             self.neural_network.fill_inputs(self.test_images[indices[i]])
             self.neural_network.create_target_array(label_num)
             self.neural_network.propagate_forward()
@@ -106,7 +118,8 @@ class Testing:
         result += (str(round(correct/(correct+incorrect) * 100,2)) + "%")
         print(result)
         for i, pair in enumerate(self.let_nums):
-            result += "\n" + (chr(65+i) + ": " + str(round(pair[0]/(pair[0]+pair[1])*100,2)) + "%")
+            letter = chr(65+i) if self.typeP == "letters" else str(i)
+            result += "\n" + (letter + ": " + str(round(pair[0]/(pair[0]+pair[1])*100,2)) + "%")
         print(result)
         return result
 
@@ -128,6 +141,7 @@ class Testing:
         return output
 
 
+# neural_network_train = Training.load("trained_model_10000.pkl")
 # neural_network_train = main.Neural_network()
 # training = Training(neural_network_train)
 # training.train(1000)

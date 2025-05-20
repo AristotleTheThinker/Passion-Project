@@ -29,16 +29,21 @@ class Connection: #connection has a weight, bias, and is connected to 2 neurons
 
 class Neural_network:
 
-    def __init__(self):
+    def __init__(self, typeP):
+
+        self.type = typeP
+
+        self.subtract = 1 if self.type == "letters" else 0
+
         self.input_layer_size = 784 #input of a 28x28 grid
 
-        self.layer2_size = 64 #second layer has 64 neurons, can change
+        self.layer2_size = 256 #second layer has 64 neurons, can change
 
-        self.layer3_size = 64 #third layer has 64 neurons, can change
+        self.layer3_size = 256 #third layer has 64 neurons, can change
 
-        self.output_layer_size = 26 #outputs a number or character
+        self.output_layer_size = 26 if self.type == "letters" else 10 #outputs a number or character
 
-        self.learning_rate = 0.01
+        self.learning_rate = 0.005
 
         self.input_neurons = []
 
@@ -121,7 +126,7 @@ class Neural_network:
 
     def create_target_array(self, label_num):
         self.target_arr = [0] * self.output_layer_size
-        self.target_arr[label_num - 1] = 1
+        self.target_arr[label_num - self.subtract] = 1
 
     def reset_neurons(self):
         for layer in [self.layer2_neurons, self.layer3_neurons, self.output_layer_neurons]:
