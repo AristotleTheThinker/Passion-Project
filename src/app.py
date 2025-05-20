@@ -12,7 +12,7 @@ CORS(app)  # Allow requests from JS (like http://localhost:5500)
 
 @app.route('/')
 def serve_index():
-    return send_from_directory('.', 'index.html')
+  return send_from_directory('.', 'index.html')
 
 def get_file_names(folder_path):
   file_names = []
@@ -22,6 +22,16 @@ def get_file_names(folder_path):
       file_names.append(item)
   return file_names
 
+def get_analysis(model_name):
+  analysis = training.Testing.load(f"analysis/{model_name}")
+  return analysis
+
+def get_network_guess(model_name, image):
+  neural_network = training.Testing.load(f"models/{model_name}")
+  tester = training.Testing(neural_network)
+  result = tester.attempt(image)
+  return result
+
 @app.route('/call-network', methods=['POST'])
 def call_network():
     data = request.json
@@ -29,9 +39,7 @@ def call_network():
     model = data.get('model', default_model)
     model = default_model if model == "" else model
     print(f"Running on {model}")
-    neural_network = training.Testing.load(f"models/{model}")
-    tester = training.Testing(neural_network)
-    result = tester.attempt(arg)
+    result = get_network_guess(model, arg)
     print(result)
     return jsonify({"message": chr(65+result)})
 
@@ -41,6 +49,14 @@ def call_files():
     arg = data.get('arg', '')
     result = get_file_names("models")
     return jsonify({"message": result})
+
+@app.route('/call-analysis', methods=['POST'])
+def call_analysis():
+    data = request.json
+    model = data.get('arg', '')
+    result = get_analysis(model)
+    return jsonify({"message": result})
+
 
 if __name__ == '__main__':
     app.run(port=5000)

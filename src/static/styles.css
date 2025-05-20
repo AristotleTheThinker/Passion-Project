@@ -12,6 +12,7 @@ body{
     align-items: center;
     flex-direction: column;
 }
+
 .navbar, .container{
     background-color: rgb(28,28,28);
     width: 800px;

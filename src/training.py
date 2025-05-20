@@ -102,9 +102,19 @@ class Testing:
 
         print("Correct: " + str(correct))
         print("Incorrect: " + str(incorrect))
-        print(str(correct/(correct+incorrect) * 100) + "%")
+        result = ""
+        result += (str(round(correct/(correct+incorrect) * 100,2)) + "%")
+        print(result)
         for i, pair in enumerate(self.let_nums):
-            print(chr(65+i) + ": " + str(round(pair[0]/(pair[0]+pair[1])*100,2)) + "%")
+            result += "\n" + (chr(65+i) + ": " + str(round(pair[0]/(pair[0]+pair[1])*100,2)) + "%")
+        print(result)
+        return result
+
+    @staticmethod
+    def dump(file_name, result):
+        with open(file_name, "wb") as f:
+            pickle.dump(result, f)
+        print("dumped")
 
     def attempt(self, image):
         self.neural_network.fill_inputs(image)
@@ -124,6 +134,8 @@ class Testing:
 # training.dump("models/trained_model.pkl")
 
 
-# neural_network_test = Testing.load("models/trained_model_10000.pkl")
+# model_name = "trained_model_0.05-128-128.pkl"
+# neural_network_test = Testing.load("models/" + model_name)
 # testing = Testing(neural_network_test)
-# testing.test(2000)
+# result = testing.test(3000)
+# Testing.dump('analysis/' + model_name, result)

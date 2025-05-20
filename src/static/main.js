@@ -4,10 +4,11 @@ const clear_button = document.querySelector('.clear_button')
 const erase_checkbox = document.querySelector('.erase')
 const dropdown = document.querySelector('#model_selector')
 const guessP = document.querySelector('#guess')
+const analysisP = document.querySelector(".analysisP")
 
-const API_BASE = window.location.hostname.includes("localhost")
+const API_BASE = window.location.hostname.includes("127.0.0.1")
   ? "http://localhost:5000"
-  : "https://passion-project-0z09.onrender.com/";
+  : "https://passion-project-0z09.onrender.com";
 
 var pixels = []
 var image = []
@@ -77,6 +78,10 @@ function populateDropdown(arr){
     }
 }
 
+function populateAnalysis(arr){
+    analysisP.innerHTML = arr
+}
+
 //Helper function to get rgb values as array from string
 function getRGBValues(rgbString) {
     const values = rgbString.substring(4, rgbString.length - 1).split(',').map(Number);
@@ -133,8 +138,13 @@ erase_checkbox.addEventListener('click', function(){
     erase = erase_checkbox.checked
 })
 
+dropdown.addEventListener('click', function(){
+    getAnalysis(dropdown.value)
+})
+
 populate()
 getFiles()
+getAnalysis(dropdown.value)
 
 // Example function to call your Python endpoint
 function callNetwork(arg) {
@@ -153,8 +163,24 @@ function callNetwork(arg) {
 }
 
 // Example function to call your Python endpoint
-function getFiles(arg) {
+function getFiles() {
     fetch(`${API_BASE}/call-files`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ arg: "" })
+    })
+    .then(response => response.json())
+    .then(data => {
+        populateDropdown(data.message);
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Example function to call your Python endpoint
+function getAnalysis(arg) {
+    fetch(`${API_BASE}/call-analysis`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -163,7 +189,8 @@ function getFiles(arg) {
     })
     .then(response => response.json())
     .then(data => {
-        populateDropdown(data.message);
+        console.log(data.message);
+        populateAnalysis(data.message);
     })
     .catch(error => console.error('Error:', error));
 }
